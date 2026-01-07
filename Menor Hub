@@ -1,0 +1,150 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- --- CONFIGURAÇÕES ---
+local SENHA_CORRETA = "Menor-5749754754987548"
+local USER_VIP = "GabrielYTFFH4X"
+local DISCORD_LINK = "https://discord.gg/bcDh9PqwzE"
+
+local Flags = {
+    Hitbox = false,
+    HitboxSize = 300, 
+    Ghost = false,
+    AutoClicker = false,
+    AutoMsgKill = false
+}
+
+local Clone = nil
+local FrasesKill = {
+    "Até minha mãe é melhor", "Matei com lag ainda", "Posso jogar sério?", "ez dms", "Primeira vez jogando?", "Foi sem querer", "Free demais", "Nem suei", "AFK joga melhor", "Boa tentativa", "Deu nem graça", "Era pra ser difícil?", "Quase acertou", "Sem esforço", "Treino desligado", "Tutorial pulado?", "Só aquecimento", "Joguei de olho fechado", "Nem precisei mirar", "Calma que piora", "Era isso tudo?", "Ping alto ainda ganhei", "Mouse desligado", "Controle invertido", "Mão esquerda só", "Sem fone ainda", "Tela travando", "FPS baixo mesmo assim", "Cliquei errado", "Sem skin ainda", "Modo iniciante", "Respira e tenta de novo", "Tentou né", "Coragem não faltou", "De graça", "Obrigado pelo ponto", "Nem deu tempo", "Foi rápido demais", "Sem chance", "Muito easy", "Brincando aqui", "Warmup só", "Nem comecei direito", "Jogo casual", "Teste de mira", "Apenas treino", "Foi mal aí", "Quase deu trabalho"
+}
+
+-- --- ANTI-LAG ---
+local function AntiLagSteal()
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+    settings().Rendering.QualityLevel = 1
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Color = Color3.fromRGB(163, 163, 163)
+        elseif v:IsA("Clothing") or v:IsA("ShirtGraphic") or v:IsA("Accessory") or v:IsA("Decal") or v:IsA("Texture") or v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v:Destroy()
+        end
+    end
+    game:GetService("Lighting").GlobalShadows = false
+end
+
+-- --- LOGIN ---
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 250); KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -125); KeyFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Instance.new("UICorner", KeyFrame)
+
+local UserImg = Instance.new("ImageLabel", KeyFrame)
+UserImg.Size = UDim2.new(0, 60, 0, 60); UserImg.Position = UDim2.new(0.5, -30, 0, 15); UserImg.Image = "rbxthumb://type=AvatarHeadShot&id="..LocalPlayer.UserId.."&w=150&h=150"
+Instance.new("UICorner", UserImg).CornerRadius = UDim.new(1, 0)
+
+local KInput = Instance.new("TextBox", KeyFrame)
+KInput.Size = UDim2.new(0, 240, 0, 40); KInput.Position = UDim2.new(0.5, -120, 0.45, 0); KInput.PlaceholderText = "SENHA STEAL POINTS..."; KInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30); KInput.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", KInput)
+
+local KBtn = Instance.new("TextButton", KeyFrame)
+KBtn.Size = UDim2.new(0, 240, 0, 40); KBtn.Position = UDim2.new(0.5, -120, 0.7, 0); KBtn.Text = "LOGAR"; KBtn.BackgroundColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KBtn)
+
+-- --- HUB ---
+local function LoadHub()
+    ScreenGui:Destroy()
+    local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+    local Window = Rayfield:CreateWindow({Name = "Menor Hub | Steal Points", LoadingTitle = "STEAL POINTS V54", LoadingSubtitle = "by GabrielYTFFH4X"})
+
+    local Combate = Window:CreateTab("Combate ⚔️")
+    local PlayerTab = Window:CreateTab("Plays 🚀")
+    local Creditos = Window:CreateTab("Créditos 👑")
+
+    Combate:CreateToggle({Name = "Hitbox Gigante 🎯", CurrentValue = false, Callback = function(v) Flags.Hitbox = v end})
+    Combate:CreateSlider({Name = "Tamanho Hitbox", Range = {2, 1000}, Increment = 1, CurrentValue = 300, Callback = function(v) Flags.HitboxSize = v end})
+    Combate:CreateToggle({Name = "Auto Clicker", CurrentValue = false, Callback = function(v) Flags.AutoClicker = v end})
+    Combate:CreateToggle({Name = "Auto Mensagem Kill", CurrentValue = false, Callback = function(v) Flags.AutoMsgKill = v end})
+
+    PlayerTab:CreateToggle({Name = "Ghost Mode (IMORTAL) 👻", CurrentValue = false, Callback = function(v)
+        Flags.Ghost = v
+        local char = LocalPlayer.Character
+        if v and char then
+            char.Archivable = true
+            Clone = char:Clone()
+            Clone.Parent = workspace
+            for _, x in pairs(Clone:GetDescendants()) do 
+                if x:IsA("BasePart") then x.Transparency = 0.5 x.CanCollide = false end 
+            end
+            
+            -- Move o corpo real e desativa a hitbox dele
+            char.HumanoidRootPart.Anchored = true
+            char.HumanoidRootPart.Size = Vector3.new(1,1,1) -- Reseta o tamanho pra não ficar gigante
+            char.HumanoidRootPart.CFrame = CFrame.new(char.HumanoidRootPart.Position.X, -30, char.HumanoidRootPart.Position.Z)
+            Camera.CameraSubject = Clone.Humanoid
+        elseif Clone then
+            local lastPos = Clone.HumanoidRootPart.CFrame
+            LocalPlayer.Character.HumanoidRootPart.Anchored = false
+            LocalPlayer.Character:PivotTo(lastPos)
+            Clone:Destroy()
+            Clone = nil
+            Camera.CameraSubject = LocalPlayer.Character.Humanoid
+        end
+    end})
+
+    PlayerTab:CreateButton({Name = "MODO AMOEBA (ANTI-LAG TOTAL)", Callback = function() AntiLagSteal() end})
+
+    Creditos:CreateLabel("Dono: GabrielYTFFH4X")
+    Creditos:CreateButton({Name = "Copiar Discord", Callback = function() setclipboard(DISCORD_LINK) end})
+end
+
+-- --- LOOPS ---
+RunService.RenderStepped:Connect(function()
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    if Flags.AutoClicker then
+        local t = char:FindFirstChildOfClass("Tool")
+        if t then t:Activate() end
+    end
+
+    -- Hitbox Loop (Só afeta os OUTROS)
+    if Flags.Hitbox then
+        for _, p in pairs(Players:GetPlayers()) do
+            -- O segredo está aqui: p ~= LocalPlayer garante que seu corpo real não cresça
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local hrp = p.Character.HumanoidRootPart
+                hrp.Size = Vector3.new(Flags.HitboxSize, Flags.HitboxSize, Flags.HitboxSize)
+                hrp.CanCollide = false; hrp.Transparency = 0.8
+            end
+        end
+    end
+
+    -- Movimento do Fantasma
+    if Flags.Ghost and Clone and char:FindFirstChild("Humanoid") then
+        Clone.Humanoid:Move(char.Humanoid.MoveDirection, false)
+        Clone.HumanoidRootPart.CFrame = CFrame.new(Clone.HumanoidRootPart.Position, Clone.HumanoidRootPart.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z))
+    end
+end)
+
+-- Kill Monitor
+Players.PlayerAdded:Connect(function(p)
+    p.CharacterAdded:Connect(function(c)
+        c:WaitForChild("Humanoid").Died:Connect(function()
+            if Flags.AutoMsgKill then
+                local m = FrasesKill[math.random(1, #FrasesKill)]
+                if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
+                    game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync(m)
+                else ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(m, "All") end
+            end
+        end)
+    end)
+end)
+
+KBtn.MouseButton1Click:Connect(function() if KInput.Text == SENHA_CORRETA then LoadHub() end end)
+if LocalPlayer.Name == USER_VIP then LoadHub() end
